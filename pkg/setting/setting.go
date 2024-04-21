@@ -7,21 +7,33 @@ import (
 	"github.com/go-ini/ini"
 )
 
-type App struct {
-	PrefixUrl     string
-	JwtSecret     string
-	JwtExpireMins time.Duration
-	AppName       string
+type appSetting struct {
+	PrefixUrl           string
+	JwtSecret           string
+	JwtExpireMins       time.Duration
+	AppName             string
+	ItemPageSize        int
+	ListingPageSize     int
+	TransactionPageSize int
 }
 
-var AppSetting = &App{}
+var App = &appSetting{}
 
-type Database struct {
+type serverSetting struct {
+	RunMode      string
+	HttpPort     int
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+}
+
+var Server = &serverSetting{}
+
+type databaseSetting struct {
 	DatabaseUri  string
 	DatabaseName string
 }
 
-var DbSetting = &Database{}
+var DB = &databaseSetting{}
 
 var cfg *ini.File
 
@@ -32,10 +44,16 @@ func Setup() {
 		log.Fatalf("setting.Setup, fail to parse 'conf/app.ini': %v", err)
 	}
 
-	mapTo("app", AppSetting)
+	mapTo("app", App)
 
-	mapTo("database", DbSetting)
+	mapTo("server", Server)
 
+	mapTo("database", DB)
+
+	// post format
+	App.JwtExpireMins *= time.Minute
+	Server.ReadTimeout *= time.Second
+	Server.WriteTimeout *= time.Second
 }
 
 // mapTo map section
