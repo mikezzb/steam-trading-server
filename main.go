@@ -9,11 +9,14 @@ import (
 	"github.com/mikezzb/steam-trading-server/db"
 	"github.com/mikezzb/steam-trading-server/pkg/setting"
 	"github.com/mikezzb/steam-trading-server/routers"
+	"github.com/mikezzb/steam-trading-server/services"
 )
 
 func init() {
 	setting.Setup()
 	db.Setup()
+	// must be after db.Setup() to use Repos
+	services.Setup()
 }
 
 func main() {

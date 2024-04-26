@@ -5,7 +5,7 @@
     },
     "paths": {
         "/auth": {
-            "get": {
+            "post": {
                 "produces": [
                     "application/json"
                 ],
@@ -56,20 +56,33 @@
                         "in": "query"
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/app.Response"
-                        }
+                "responses": {}
+            }
+        },
+        "/listings": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get listings, with JWT bearer token auth",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
                     }
-                }
+                ],
+                "responses": {}
+            }
+        },
+        "/subscription": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Add subscription",
+                "responses": {}
             }
         }
     },

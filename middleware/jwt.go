@@ -14,6 +14,7 @@ func JWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var code int
 		var data interface{}
+		var claims *util.Claims = nil
 
 		code = e.SUCCESS
 		// extract token from auth header
@@ -30,7 +31,8 @@ func JWT() gin.HandlerFunc {
 
 			token := authHeaderParts[1]
 
-			_, err := util.ParseToken(token)
+			parsedClaims, err := util.ParseToken(token)
+			claims = parsedClaims
 
 			if err != nil {
 				switch err {
@@ -53,6 +55,10 @@ func JWT() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		// add claims to context
+		c.Set("username", claims.Username)
+		c.Set("userId", util.StringToObjectId(claims.UserId))
 
 		c.Next()
 	}

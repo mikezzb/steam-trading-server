@@ -11,7 +11,7 @@ info:
   contact: {}
 paths:
   /auth:
-    get:
+    post:
       parameters:
       - description: Username
         in: query
@@ -44,14 +44,23 @@ paths:
         type: integer
       produces:
       - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/app.Response'
+      responses: {}
       summary: Get items
+  /listings:
+    get:
+      parameters:
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Get listings, with JWT bearer token auth
+  /subscription:
+    post:
+      produces:
+      - application/json
+      responses: {}
+      summary: Add subscription
 swagger: "2.0"

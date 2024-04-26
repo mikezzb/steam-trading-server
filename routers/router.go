@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	docs "github.com/mikezzb/steam-trading-server/docs"
+	"github.com/mikezzb/steam-trading-server/middleware"
 	"github.com/mikezzb/steam-trading-server/pkg/static"
 	"github.com/mikezzb/steam-trading-server/routers/api"
 	swaggerfiles "github.com/swaggo/files"
@@ -24,7 +25,7 @@ func InitRouter() *gin.Engine {
 	r.StaticFS("/static/images", http.Dir(static.GetImageFullUrl()))
 
 	// auth
-	r.POST("/auth", api.GetAuth)
+	r.POST("/auth", api.PostAuth)
 
 	// api
 	apiv1 := r.Group("/api")
@@ -33,6 +34,13 @@ func InitRouter() *gin.Engine {
 		apiv1.GET("/items", api.GetItems)
 
 		// listings
+		apiv1.GET("/listings", api.GetListings)
+
+		// subscriptions
+		apiv1.GET("/subscriptions", middleware.JWT(), api.GetSubs)
+		apiv1.POST("/subscriptions", middleware.JWT(), api.AddSub)
+		apiv1.DELETE("/subscriptions/:id", middleware.JWT(), api.DeleteSub)
+		apiv1.PUT("/subscriptions/:id", middleware.JWT(), api.UpdateSub)
 	}
 
 	return r
