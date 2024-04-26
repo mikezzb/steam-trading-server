@@ -6,31 +6,20 @@ import (
 	"time"
 
 	"github.com/mikezzb/steam-trading-server/cache"
-	"github.com/mikezzb/steam-trading-server/db"
 	"github.com/mikezzb/steam-trading-server/pkg/setting"
 	"github.com/mikezzb/steam-trading-shared/database/model"
-	"github.com/mikezzb/steam-trading-shared/database/repository"
 )
 
-var itemRepo *repository.ItemRepository = nil
-
-type ItemService struct {
+type Item struct {
 	PageNum int
 }
 
-func getItemRepo() *repository.ItemRepository {
-	if itemRepo == nil {
-		itemRepo = db.Repos.GetItemRepository()
-	}
-	return itemRepo
-}
-
-func (s *ItemService) Count() (int64, error) {
+func (s *Item) Count() (int64, error) {
 	val, err := cache.UseCache(
 		"ITEM_TOTAL",
 		1*time.Minute,
 		func() (interface{}, error) {
-			return getItemRepo().Count()
+			return itemRepo.Count()
 		},
 	)
 
@@ -41,15 +30,15 @@ func (s *ItemService) Count() (int64, error) {
 	return val.(int64), nil
 }
 
-func (s *ItemService) GetItems() ([]model.Item, error) {
-	return getItemRepo().GetItemsByPage(s.PageNum, setting.App.ItemPageSize, nil)
+func (s *Item) GetItems() ([]model.Item, error) {
+	return itemRepo.GetItemsByPage(s.PageNum, setting.App.ItemPageSize, nil)
 }
 
-func (s *ItemService) GetItemByName(id string) (*model.Item, error) {
-	return getItemRepo().GetItemByName(id)
+func (s *Item) GetItemByName(id string) (*model.Item, error) {
+	return itemRepo.GetItemByName(id)
 }
 
-func (s *ItemService) getCacheKey() string {
+func (s *Item) getCacheKey() string {
 	keys := []string{
 		"ITEM",
 		strconv.Itoa(s.PageNum),
