@@ -22,13 +22,13 @@ type auth struct {
 // @Param password query string true "Password"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
-// @Router /auth [get]
-func GetAuth(c *gin.Context) {
+// @Router /auth [post]
+func PostAuth(c *gin.Context) {
 	appG := app.Gin{C: c}
 	vali := validation.Validation{}
 
-	username := c.Query("username")
-	password := c.Query("password")
+	username := c.PostForm("username")
+	password := c.PostForm("password")
 	a := auth{Username: username, Password: password}
 	ok, _ := vali.Valid(&a)
 	if !ok {
@@ -50,7 +50,7 @@ func GetAuth(c *gin.Context) {
 		return
 	}
 
-	token, err := util.GenerateToken(username)
+	token, err := util.GenerateToken(user.Username, user.User.ID.Hex())
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return

@@ -1,6 +1,8 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mikezzb/steam-trading-server/app"
 	"github.com/mikezzb/steam-trading-server/e"
@@ -12,26 +14,25 @@ import (
 // @Summary Get items
 // @Produce json
 // @Param page query int false "Page"
-// @Success 200 {object} { "code": 200, "msg": "ok", "data": { "items": model.Item , "total": 1 } }
 // @Router /items [get]
 func GetItems(c *gin.Context) {
 	appG := app.Gin{C: c}
 
-	itemService := services.ItemService{
+	itemService := services.Item{
 		PageNum: util.GetPage(c, setting.App.ItemPageSize),
 	}
 
 	items, err := itemService.GetItems()
 
 	if err != nil {
-		appG.Response(500, e.SERVER_ERROR, nil)
+		appG.Response(http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return
 	}
 
 	// add total count
 	total, err := itemService.Count()
 	if err != nil {
-		appG.Response(500, e.SERVER_ERROR, nil)
+		appG.Response(http.StatusInternalServerError, e.SERVER_ERROR, nil)
 		return
 	}
 
@@ -39,5 +40,5 @@ func GetItems(c *gin.Context) {
 	data["items"] = items
 	data["total"] = total
 
-	appG.Response(200, e.SUCCESS, items)
+	appG.Response(http.StatusOK, e.SUCCESS, data)
 }
