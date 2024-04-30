@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mikezzb/steam-trading-server/app"
 	"github.com/mikezzb/steam-trading-server/e"
-	"github.com/mikezzb/steam-trading-server/pkg/setting"
 	"github.com/mikezzb/steam-trading-server/services"
 	"github.com/mikezzb/steam-trading-server/util"
 )
@@ -17,16 +16,15 @@ import (
 // @Router /listings [get]
 func GetListings(c *gin.Context) {
 	appG := app.Gin{C: c}
-	pageNum := util.GetPage(c, setting.App.ItemPageSize)
 
 	listingService := services.Listing{
-		PageNum: pageNum,
+		Page: util.GetPage(c),
 	}
 
 	listings, err := listingService.GetListings()
 
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.SERVER_ERROR, nil)
+		appG.Error(http.StatusInternalServerError, e.SERVER_ERROR, err)
 		return
 	}
 
@@ -34,7 +32,7 @@ func GetListings(c *gin.Context) {
 	total, err := listingService.Count()
 
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.SERVER_ERROR, nil)
+		appG.Error(http.StatusInternalServerError, e.SERVER_ERROR, err)
 		return
 	}
 

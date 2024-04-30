@@ -7,21 +7,216 @@ definitions:
       msg:
         type: string
     type: object
+  services.AddSubForm:
+    properties:
+      maxPremium:
+        type: string
+      name:
+        type: string
+      notiId:
+        type: string
+      notiType:
+        type: string
+      rarity:
+        type: string
+    type: object
+  services.LoginForm:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  services.SignupForm:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
-  /auth:
-    post:
+  /admin/items:
+    get:
       parameters:
-      - description: Username
+      - description: Page
         in: query
-        name: username
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - Bearer: []
+      summary: Get items [admin]
+  /auth:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - Bearer: []
+      summary: Get auth
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login Form
+        in: body
+        name: loginForm
+        required: true
+        schema:
+          $ref: '#/definitions/services.LoginForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: Post auth
+  /items:
+    get:
+      parameters:
+      - description: Page
+        in: query
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Get items
+  /items/{id}:
+    get:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
         required: true
         type: string
-      - description: Password
+      produces:
+      - application/json
+      responses: {}
+      summary: Get item by id
+  /listings:
+    get:
+      parameters:
+      - description: Page
         in: query
-        name: password
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Get listings, with JWT bearer token auth
+  /subscriptions:
+    delete:
+      parameters:
+      - description: ID
+        in: query
+        name: id
         required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete subscription
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get subscriptions
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Add Subscription Form
+        in: body
+        name: addSubForm
+        required: true
+        schema:
+          $ref: '#/definitions/services.AddSubForm'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Add subscription
+    put:
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Update subscription
+  /transactions:
+    get:
+      parameters:
+      - description: Item Name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Page
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Item Rarity
+        in: query
+        name: rarity
+        type: string
+      - description: Item Paint Seed
+        in: query
+        name: paintSeed
         type: string
       produces:
       - application/json
@@ -34,33 +229,36 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/app.Response'
-      summary: Get auth
-  /items:
-    get:
-      parameters:
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      produces:
-      - application/json
-      responses: {}
-      summary: Get items
-  /listings:
-    get:
-      parameters:
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      produces:
-      - application/json
-      responses: {}
-      summary: Get listings, with JWT bearer token auth
-  /subscription:
+      security:
+      - Bearer: []
+      summary: Get transaction
+  /users:
     post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User Form
+        in: body
+        name: userForm
+        required: true
+        schema:
+          $ref: '#/definitions/services.SignupForm'
       produces:
       - application/json
-      responses: {}
-      summary: Add subscription
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.Response'
+      summary: Create user
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -2,6 +2,7 @@ package setting
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/go-ini/ini"
@@ -20,10 +21,12 @@ type appSetting struct {
 var App = &appSetting{}
 
 type serverSetting struct {
-	RunMode      string
-	HttpPort     int
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
+	RunMode           string
+	HttpPort          int
+	ReadTimeout       time.Duration
+	WriteTimeout      time.Duration
+	AllowedOrigins    map[string]bool
+	AllowedOriginsRaw string
 }
 
 var Server = &serverSetting{}
@@ -54,6 +57,10 @@ func Setup() {
 	App.JwtExpireMins *= time.Minute
 	Server.ReadTimeout *= time.Second
 	Server.WriteTimeout *= time.Second
+	Server.AllowedOrigins = make(map[string]bool)
+	for _, origin := range strings.Split(Server.AllowedOriginsRaw, ",") {
+		Server.AllowedOrigins[origin] = true
+	}
 }
 
 // mapTo map section

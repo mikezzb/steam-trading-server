@@ -1,6 +1,8 @@
 package app
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mikezzb/steam-trading-server/e"
 )
@@ -21,4 +23,9 @@ func (g *Gin) Response(httpCode, errCode int, data interface{}) {
 		Data: data,
 		Msg:  e.GetMsg(errCode),
 	})
+}
+
+func (g *Gin) Error(httpCode, errCode int, err error) {
+	log.Printf("Error: %v", err)
+	g.Response(httpCode, errCode, nil)
 }

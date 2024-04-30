@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
@@ -11,6 +12,10 @@ import (
 )
 
 func JWT() gin.HandlerFunc {
+	return JWTRole("")
+}
+
+func JWTRole(role string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var code int
 		var data interface{}
@@ -25,6 +30,7 @@ func JWT() gin.HandlerFunc {
 		}
 
 		authHeaderParts := strings.Split(authHeader, " ") // Bearer token
+		log.Printf("authHeaderParts: %v", authHeaderParts)
 		if len(authHeaderParts) != 2 || authHeaderParts[0] != "Bearer" {
 			code = e.ERROR_INVALID_AUTH_HEADER
 		} else {
@@ -42,6 +48,11 @@ func JWT() gin.HandlerFunc {
 					code = e.ERROR_AUTH_CHECK_TOKEN_FAIL
 				}
 			}
+
+			// check role
+			if role != "" && claims.Role != role {
+				code = e.ERROR_AUTH_CHECK_ROLE_FAIL
+			}
 		}
 
 		// if error, return
@@ -57,7 +68,7 @@ func JWT() gin.HandlerFunc {
 		}
 
 		// add claims to context
-		c.Set("username", claims.Username)
+		c.Set("role", claims.Role)
 		c.Set("userId", util.StringToObjectId(claims.UserId))
 
 		c.Next()

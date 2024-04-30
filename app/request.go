@@ -8,6 +8,6 @@ import (
 
 func MakeErrors(err []*validation.Error) {
 	for _, e := range err {
-		log.Println(e.Key, e.Message)
+		log.Printf(e.Key, e.Message)
 	}
 }

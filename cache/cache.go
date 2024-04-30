@@ -32,8 +32,8 @@ func (c *Cache) Set(key string, value interface{}, expire time.Duration) {
 
 // Get gets a value by key
 func (c *Cache) Get(key string) (interface{}, bool) {
-	c.RLock()
-	defer c.RUnlock()
+	c.Lock()
+	defer c.Unlock()
 	value, ok := c.values[key]
 	if !ok {
 		return nil, false
@@ -44,10 +44,8 @@ func (c *Cache) Get(key string) (interface{}, bool) {
 	}
 	// if expire, delete the key-value pair
 	if expire.Before(time.Now()) {
-		c.Lock()
 		delete(c.values, key)
 		delete(c.expires, key)
-		c.Unlock()
 		return nil, false
 	}
 	return value, true

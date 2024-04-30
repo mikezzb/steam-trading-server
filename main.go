@@ -19,6 +19,10 @@ func init() {
 	services.Setup()
 }
 
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
 	gin.SetMode(setting.Server.RunMode)
 

@@ -1,12 +1,12 @@
 package services
 
 import (
+	"log"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/mikezzb/steam-trading-server/cache"
-	"github.com/mikezzb/steam-trading-server/pkg/setting"
 	"github.com/mikezzb/steam-trading-shared/database/model"
 )
 
@@ -30,8 +30,17 @@ func (s *Item) Count() (int64, error) {
 	return val.(int64), nil
 }
 
-func (s *Item) GetItems() ([]model.Item, error) {
-	return itemRepo.GetItemsByPage(s.PageNum, setting.App.ItemPageSize, nil)
+func (s *Item) GetItem(id string) (*model.Item, error) {
+	return itemRepo.FindItemById(id)
+}
+
+func (s *Item) GetItems(pageSize int) ([]model.Item, error) {
+	log.Printf("GetItems: %v", s.PageNum)
+	items, err := itemRepo.GetItemsByPage(s.PageNum, pageSize, nil)
+	if err != nil || items == nil {
+		return make([]model.Item, 0), err
+	}
+	return items, nil
 }
 
 func (s *Item) GetItemByName(id string) (*model.Item, error) {
