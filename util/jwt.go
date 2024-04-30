@@ -10,17 +10,17 @@ import (
 var jwtSecret []byte
 
 type Claims struct {
-	Username string `json:"username"`
 	// mongodb user id
 	UserId string `json:"userId"`
+	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }
 
-func GenerateToken(username string, userId string) (string, error) {
-	expireTime := time.Now().Add(setting.App.JwtExpireMins * time.Minute)
+func GenerateToken(userId, role string) (string, error) {
+	expireTime := time.Now().Add(setting.App.JwtExpireMins)
 	claims := Claims{
-		username,
 		userId,
+		role,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expireTime),
 			Issuer:    setting.App.AppName,
