@@ -11,15 +11,18 @@ import (
 )
 
 // @Summary Add subscription
+// @Security ApiKeyAuth
+// @Accept json
+// @Param addSubForm body services.AddSubForm true "Add Subscription Form"
 // @Produce json
-// @Router /subscription [post]
+// @Router /subscriptions [post]
 func AddSub(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var form *services.AddSubForm = nil
+	var form *services.AddSubForm = &services.AddSubForm{}
 
 	httpCode, errCode := app.BindValidate(c, form)
-	if errCode != e.SUCCESS || form == nil {
-		appG.Response(httpCode, errCode, nil)
+	if errCode != e.SUCCESS {
+		appG.Error(httpCode, errCode, nil)
 		return
 	}
 
@@ -35,7 +38,7 @@ func AddSub(c *gin.Context) {
 	id, err := subService.AddSub()
 
 	if err != nil {
-		appG.Response(http.StatusInternalServerError, e.SERVER_ERROR, nil)
+		appG.Error(http.StatusInternalServerError, e.SERVER_ERROR, err)
 		return
 	}
 
@@ -45,6 +48,10 @@ func AddSub(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
+// @Summary Update subscription
+// @Security ApiKeyAuth
+// @Produce json
+// @Router /subscriptions [put]
 func UpdateSub(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var form *services.UpdateSubForm = nil
@@ -76,6 +83,14 @@ func UpdateSub(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
+// @Summary Delete subscription
+// @Security ApiKeyAuth
+// @Produce json
+// @Router /subscriptions [delete]
+// @Param id query string true "ID"
+// @Success 200 {object} app.Response
+// @Failure 400 {object} app.Response
+// @Failure 500 {object} app.Response
 func DeleteSub(c *gin.Context) {
 	appG := app.Gin{C: c}
 	id := c.Query("id")
@@ -100,6 +115,12 @@ func DeleteSub(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
+// @Summary Get subscriptions
+// @Security ApiKeyAuth
+// @Produce json
+// @Router /subscriptions [get]
+// @Success 200 {object} app.Response
+// @Failure 500 {object} app.Response
 func GetSubs(c *gin.Context) {
 	appG := app.Gin{C: c}
 

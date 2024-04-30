@@ -6,11 +6,11 @@ import (
 )
 
 type AddSubForm struct {
-	Name       string `form:"name" valid:"Required;"`
-	Rarity     string `form:"rarity" valid:"Required;"`
-	MaxPremium string `form:"maxPremium" valid:"Required;"`
-	NotiType   string `form:"notiType" valid:"Required;"`
-	NotiId     string `form:"notiId" valid:"Required;"`
+	Name       string `json:"name" valid:"Required;"`
+	Rarity     string `json:"rarity" valid:"Required;"`
+	MaxPremium string `json:"maxPremium" valid:"Required;"`
+	NotiType   string `json:"notiType" valid:"Required;"`
+	NotiId     string `json:"notiId" valid:"Required;"`
 }
 
 type UpdateSubForm struct {
