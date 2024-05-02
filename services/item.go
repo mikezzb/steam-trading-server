@@ -8,10 +8,12 @@ import (
 
 	"github.com/mikezzb/steam-trading-server/cache"
 	"github.com/mikezzb/steam-trading-shared/database/model"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Item struct {
 	PageNum int
+	Filters map[string][]interface{}
 }
 
 func (s *Item) Count() (int64, error) {
@@ -34,9 +36,9 @@ func (s *Item) GetItem(id string) (*model.Item, error) {
 	return itemRepo.FindItemById(id)
 }
 
-func (s *Item) GetItems(pageSize int) ([]model.Item, error) {
-	log.Printf("GetItems: %v", s.PageNum)
-	items, err := itemRepo.GetItemsByPage(s.PageNum, pageSize, nil)
+func (s *Item) GetItems(pageSize int, filters bson.M) ([]model.Item, error) {
+	log.Printf("Services GetItems: %v, %v", pageSize, filters)
+	items, err := itemRepo.GetItemsByPage(s.PageNum, pageSize, filters)
 	if err != nil || items == nil {
 		return make([]model.Item, 0), err
 	}
@@ -54,4 +56,20 @@ func (s *Item) getCacheKey() string {
 	}
 
 	return strings.Join(keys, "_")
+}
+
+func (s *Item) GetItemFilters() (map[string][]interface{}, error) {
+	val, err := cache.UseCache(
+		"ITEM_FILTERS",
+		5*time.Minute,
+		func() (interface{}, error) {
+			return itemRepo.GetItemFilters()
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return val.(map[string][]interface{}), nil
 }

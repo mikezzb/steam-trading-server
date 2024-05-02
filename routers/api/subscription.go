@@ -28,7 +28,8 @@ func AddSub(c *gin.Context) {
 
 	subService := services.Subscription{
 		Name:       form.Name,
-		Rarity:     form.Rarity,
+		Rarities:   form.Rarities,
+		PaintSeeds: form.PaintSeeds,
 		MaxPremium: form.MaxPremium,
 		NotiType:   form.NotiType,
 		NotiId:     form.NotiId,
@@ -65,7 +66,8 @@ func UpdateSub(c *gin.Context) {
 	subService := services.Subscription{
 		ID:         form.ID,
 		Name:       form.Name,
-		Rarity:     form.Rarity,
+		Rarities:   form.Rarities,
+		PaintSeeds: form.PaintSeeds,
 		MaxPremium: form.MaxPremium,
 		NotiType:   form.NotiType,
 		NotiId:     form.NotiId,

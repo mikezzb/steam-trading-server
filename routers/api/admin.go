@@ -24,7 +24,7 @@ func GetItemsAdmin(c *gin.Context) {
 		PageNum: util.GetPage(c),
 	}
 
-	items, err := itemService.GetItems(100)
+	items, err := itemService.GetItems(100, nil)
 
 	if err != nil {
 		appG.Error(http.StatusInternalServerError, e.SERVER_ERROR, err)

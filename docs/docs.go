@@ -129,6 +129,28 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/items/filters": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get item filters",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/app.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/items/{id}": {
             "get": {
                 "produces": [

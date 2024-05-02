@@ -6,27 +6,31 @@ import (
 )
 
 type AddSubForm struct {
-	Name       string `json:"name" valid:"Required;"`
-	Rarity     string `json:"rarity" valid:"Required;"`
-	MaxPremium string `json:"maxPremium" valid:"Required;"`
-	NotiType   string `json:"notiType" valid:"Required;"`
-	NotiId     string `json:"notiId" valid:"Required;"`
+	Name       string   `json:"name" valid:"Required;"`
+	Rarities   []string `bson:"rarities,omitempty" json:"rarities"`
+	PaintSeeds []int    `bson:"paintSeeds,omitempty" json:"paintSeeds"`
+	MaxPremium string   `json:"maxPremium" valid:"Optional;"`
+	NotiType   string   `json:"notiType" valid:"Required;"`
+	NotiId     string   `json:"notiId" valid:"Required;"`
 }
 
 type UpdateSubForm struct {
 	ID string `form:"id" valid:"Required;"`
 
-	Name       string `form:"name" valid:"Required;"`
-	Rarity     string `form:"rarity" valid:"Required;"`
-	MaxPremium string `form:"maxPremium" valid:"Required;"`
-	NotiType   string `form:"notiType" valid:"Required;"`
-	NotiId     string `form:"notiId" valid:"Required;"`
+	Name       string   `json:"name" valid:"Required;"`
+	Rarities   []string `bson:"rarities,omitempty" json:"rarities"`
+	PaintSeeds []int    `bson:"paintSeeds,omitempty" json:"paintSeeds"`
+	MaxPremium string   `json:"maxPremium" valid:"Optional;"`
+	NotiType   string   `json:"notiType" valid:"Required;"`
+	NotiId     string   `json:"notiId" valid:"Required;"`
 }
 
 type Subscription struct {
 	ID         string
 	Name       string
-	Rarity     string
+	Rarities   []string
+	PaintSeeds []int
+
 	MaxPremium string
 	NotiType   string
 	NotiId     string
@@ -43,7 +47,8 @@ func (s *Subscription) getModel() *model.Subscription {
 	return &model.Subscription{
 		ID:         id,
 		Name:       s.Name,
-		Rarity:     s.Rarity,
+		Rarities:   s.Rarities,
+		PaintSeeds: s.PaintSeeds,
 		MaxPremium: s.MaxPremium,
 		NotiType:   s.NotiType,
 		NotiId:     s.NotiId,

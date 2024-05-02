@@ -34,6 +34,7 @@ func InitRouter() *gin.Engine {
 
 		// items
 		apiv1.GET("/items", api.GetItems)
+		apiv1.GET("/items/filters", api.GetItemsFilters)
 		apiv1.GET("/items/:id", api.GetItem)
 
 		// listings
