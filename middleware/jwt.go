@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 	"strings"
 
@@ -30,7 +29,6 @@ func JWTRole(role string) gin.HandlerFunc {
 		}
 
 		authHeaderParts := strings.Split(authHeader, " ") // Bearer token
-		log.Printf("authHeaderParts: %v", authHeaderParts)
 		if len(authHeaderParts) != 2 || authHeaderParts[0] != "Bearer" {
 			code = e.ERROR_INVALID_AUTH_HEADER
 		} else {

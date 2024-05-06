@@ -8,7 +8,6 @@ import (
 	"github.com/mikezzb/steam-trading-server/e"
 	"github.com/mikezzb/steam-trading-server/pkg/setting"
 	"github.com/mikezzb/steam-trading-server/services"
-	"github.com/mikezzb/steam-trading-server/types"
 	"github.com/mikezzb/steam-trading-server/util"
 )
 
@@ -26,9 +25,9 @@ func GetItems(c *gin.Context) {
 		PageNum: util.GetPage(c),
 	}
 
-	itemFilters := types.NewItemFilters(c.Request.URL.Query())
+	itemFilters := util.NewItemFilters(c.Request.URL.Query())
 
-	items, err := itemService.GetItems(setting.App.ItemPageSize, itemFilters.GetBsonFilters())
+	items, err := itemService.GetItems(setting.App.ItemPageSize, itemFilters)
 
 	if err != nil {
 		appG.Error(http.StatusInternalServerError, e.SERVER_ERROR, err)
@@ -36,7 +35,7 @@ func GetItems(c *gin.Context) {
 	}
 
 	// add total count
-	total, err := itemService.Count()
+	total, err := itemService.Count(itemFilters)
 	if err != nil {
 		appG.Error(http.StatusInternalServerError, e.SERVER_ERROR, err)
 		return

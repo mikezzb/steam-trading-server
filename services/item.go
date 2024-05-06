@@ -1,27 +1,25 @@
 package services
 
 import (
-	"log"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/mikezzb/steam-trading-server/cache"
+	"github.com/mikezzb/steam-trading-server/util"
 	"github.com/mikezzb/steam-trading-shared/database/model"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Item struct {
 	PageNum int
-	Filters map[string][]interface{}
 }
 
-func (s *Item) Count() (int64, error) {
+func (s *Item) Count(filters *util.ItemFilters) (int64, error) {
 	val, err := cache.UseCache(
 		"ITEM_TOTAL",
 		1*time.Minute,
 		func() (interface{}, error) {
-			return itemRepo.Count()
+			return itemRepo.Count(filters.GetBsonFilters())
 		},
 	)
 
@@ -36,9 +34,8 @@ func (s *Item) GetItem(id string) (*model.Item, error) {
 	return itemRepo.FindItemById(id)
 }
 
-func (s *Item) GetItems(pageSize int, filters bson.M) ([]model.Item, error) {
-	log.Printf("Services GetItems: %v, %v", pageSize, filters)
-	items, err := itemRepo.GetItemsByPage(s.PageNum, pageSize, filters)
+func (s *Item) GetItems(pageSize int, filters *util.ItemFilters) ([]model.Item, error) {
+	items, err := itemRepo.GetItemsByPage(s.PageNum, pageSize, filters.GetBsonFilters())
 	if err != nil || items == nil {
 		return make([]model.Item, 0), err
 	}

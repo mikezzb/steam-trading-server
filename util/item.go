@@ -1,11 +1,13 @@
-package types
+package util
 
 import (
+	"log"
 	"net/url"
 	"strings"
 
 	"github.com/mikezzb/steam-trading-server/constants"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ItemFilters struct {
@@ -21,6 +23,7 @@ type ItemFilters struct {
 }
 
 func (s *ItemFilters) GetBsonFilters() bson.M {
+	log.Printf("Get BSON FOR ITEM FILTERS: %v", s)
 	filters := bson.M{}
 
 	if s.Rarity != "" {
@@ -28,7 +31,7 @@ func (s *ItemFilters) GetBsonFilters() bson.M {
 	}
 
 	if s.PaintSeed != "" {
-		filters["paintSeed"] = s.PaintSeed
+		filters["paintSeed"], _ = primitive.ParseDecimal128(s.PaintSeed)
 	}
 
 	if s.Name != "" {
@@ -46,6 +49,8 @@ func (s *ItemFilters) GetBsonFilters() bson.M {
 	if len(s.Exteriors) > 0 {
 		filters["exterior"] = bson.M{"$in": s.Exteriors}
 	}
+
+	log.Printf("BSON FILTERS: %v", filters)
 
 	return filters
 }
@@ -71,12 +76,16 @@ func (s *ItemFilters) AddFilter(key, value string) {
 			}
 		}
 		s.Exteriors = exts
+	default:
+		log.Printf("Invalid filter key: %s", key)
 	}
+
 }
 
 func NewItemFilters(params url.Values) *ItemFilters {
 	s := &ItemFilters{}
 	for k, v := range params {
+		log.Printf("Item Filter: k: %s, v: %s", k, v[0])
 		s.AddFilter(k, v[0])
 	}
 	return s

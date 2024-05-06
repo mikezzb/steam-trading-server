@@ -9,7 +9,7 @@ type AddSubForm struct {
 	Name       string   `json:"name" valid:"Required;"`
 	Rarities   []string `bson:"rarities,omitempty" json:"rarities"`
 	PaintSeeds []int    `bson:"paintSeeds,omitempty" json:"paintSeeds"`
-	MaxPremium string   `json:"maxPremium" valid:"Optional;"`
+	MaxPremium string   `json:"maxPremium" valid:"Required;"`
 	NotiType   string   `json:"notiType" valid:"Required;"`
 	NotiId     string   `json:"notiId" valid:"Required;"`
 }
@@ -20,7 +20,7 @@ type UpdateSubForm struct {
 	Name       string   `json:"name" valid:"Required;"`
 	Rarities   []string `bson:"rarities,omitempty" json:"rarities"`
 	PaintSeeds []int    `bson:"paintSeeds,omitempty" json:"paintSeeds"`
-	MaxPremium string   `json:"maxPremium" valid:"Optional;"`
+	MaxPremium string   `json:"maxPremium" valid:"Required;"`
 	NotiType   string   `json:"notiType" valid:"Required;"`
 	NotiId     string   `json:"notiId" valid:"Required;"`
 }

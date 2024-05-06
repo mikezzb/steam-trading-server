@@ -17,8 +17,14 @@ definitions:
         type: string
       notiType:
         type: string
-      rarity:
-        type: string
+      paintSeeds:
+        items:
+          type: integer
+        type: array
+      rarities:
+        items:
+          type: string
+        type: array
     type: object
   services.LoginForm:
     properties:
@@ -106,6 +112,18 @@ paths:
         name: page
         required: true
         type: integer
+      - description: Exteriors
+        in: query
+        name: exterior
+        type: string
+      - description: Category
+        in: query
+        name: category
+        type: string
+      - description: Skin
+        in: query
+        name: skin
+        type: string
       produces:
       - application/json
       responses: {}
@@ -219,6 +237,11 @@ paths:
         name: name
         required: true
         type: string
+      - description: Days
+        in: query
+        name: days
+        required: true
+        type: integer
       - description: Page
         in: query
         name: page

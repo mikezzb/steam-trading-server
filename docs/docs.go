@@ -124,6 +124,24 @@ const docTemplate = `{
                         "name": "page",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Exteriors",
+                        "name": "exterior",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Skin",
+                        "name": "skin",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
@@ -312,6 +330,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "description": "Days",
+                        "name": "days",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
                         "description": "Page",
                         "name": "page",
                         "in": "query",
@@ -411,8 +436,17 @@ const docTemplate = `{
                 "notiType": {
                     "type": "string"
                 },
-                "rarity": {
-                    "type": "string"
+                "paintSeeds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "rarities": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

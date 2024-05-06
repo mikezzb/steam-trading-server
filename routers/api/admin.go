@@ -25,6 +25,7 @@ func GetItemsAdmin(c *gin.Context) {
 	}
 
 	items, err := itemService.GetItems(100, nil)
+	itemFilters := util.NewItemFilters(c.Request.URL.Query())
 
 	if err != nil {
 		appG.Error(http.StatusInternalServerError, e.SERVER_ERROR, err)
@@ -32,7 +33,7 @@ func GetItemsAdmin(c *gin.Context) {
 	}
 
 	// add total count
-	total, err := itemService.Count()
+	total, err := itemService.Count(itemFilters)
 	if err != nil {
 		appG.Error(http.StatusInternalServerError, e.SERVER_ERROR, err)
 		return
