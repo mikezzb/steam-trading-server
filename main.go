@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mikezzb/steam-trading-server/db"
@@ -27,7 +28,13 @@ func main() {
 	gin.SetMode(setting.Server.RunMode)
 
 	router := routers.InitRouter()
-	endPoint := fmt.Sprintf(":%d", setting.Server.HttpPort)
+
+	var endPoint string
+	if os.Getenv("PORT") != "" {
+		endPoint = fmt.Sprintf(":%s", os.Getenv("PORT"))
+	} else {
+		endPoint = fmt.Sprintf(":%d", setting.Server.HttpPort)
+	}
 
 	server := &http.Server{
 		Addr:           endPoint,

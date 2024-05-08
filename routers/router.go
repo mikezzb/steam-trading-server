@@ -2,7 +2,9 @@ package routers
 
 import (
 	"net/http"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	docs "github.com/mikezzb/steam-trading-server/docs"
 	"github.com/mikezzb/steam-trading-server/middleware"
@@ -16,7 +18,13 @@ func InitRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	r.Use(middleware.CORS())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"https://cs2-trade.vercel.app", "http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Authorization", "Content-Type", "Content-Length", "X-CSRF-Token", "Origin"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// swagger
 	docs.SwaggerInfo.BasePath = "/api"
