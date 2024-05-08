@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/mikezzb/steam-trading-server/util"
 	"github.com/mikezzb/steam-trading-shared/database/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -15,8 +16,6 @@ type AddSubForm struct {
 }
 
 type UpdateSubForm struct {
-	ID string `form:"id" valid:"Required;"`
-
 	Name       string   `json:"name" valid:"Required;"`
 	Rarities   []string `bson:"rarities,omitempty" json:"rarities"`
 	PaintSeeds []int    `bson:"paintSeeds,omitempty" json:"paintSeeds"`
@@ -68,10 +67,19 @@ func (s *Subscription) UpdateSub() error {
 	return subRepo.UpdateSubscription(s.getModel())
 }
 
-func (s *Subscription) DeleteSub() error {
-	return subRepo.DeleteSubscriptionByName(s.Name, s.OwnerId)
+func (s *Subscription) DeleteSub(id string) error {
+	// convert id to object id
+	objId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	return subRepo.DeleteSubscriptionById(objId, s.OwnerId)
 }
 
-func (s *Subscription) GetSubs() ([]model.Subscription, error) {
-	return subRepo.GetAllByOwnerId(s.OwnerId)
+func (s *Subscription) GetSubs(itemFilters *util.ItemFilters) ([]model.Subscription, error) {
+	// make filter bson
+	filter := itemFilters.GetBsonFilters()
+	// add owner id
+	filter["ownerId"] = s.OwnerId
+	return subRepo.GetSubscriptions(filter)
 }

@@ -53,18 +53,26 @@ func AddSub(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Produce json
 // @Router /subscriptions [put]
+// @Param id path string true "Subscription ID"
 func UpdateSub(c *gin.Context) {
 	appG := app.Gin{C: c}
-	var form *services.UpdateSubForm = nil
+	var form *services.UpdateSubForm = &services.UpdateSubForm{}
+
+	id := c.Params.ByName("id")
+
+	if id == "" {
+		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
+		return
+	}
 
 	httpCode, errCode := app.BindValidate(c, form)
-	if errCode != e.SUCCESS || form == nil {
+	if errCode != e.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
 		return
 	}
 
 	subService := services.Subscription{
-		ID:         form.ID,
+		ID:         id,
 		Name:       form.Name,
 		Rarities:   form.Rarities,
 		PaintSeeds: form.PaintSeeds,
@@ -89,13 +97,13 @@ func UpdateSub(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Produce json
 // @Router /subscriptions [delete]
-// @Param id query string true "ID"
+// @Param id path string true "Subscription ID"
 // @Success 200 {object} app.Response
 // @Failure 400 {object} app.Response
 // @Failure 500 {object} app.Response
 func DeleteSub(c *gin.Context) {
 	appG := app.Gin{C: c}
-	id := c.Query("id")
+	id := c.Params.ByName("id")
 
 	if id == "" {
 		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
@@ -107,7 +115,7 @@ func DeleteSub(c *gin.Context) {
 		OwnerId: util.GetUserId(c),
 	}
 
-	err := subService.DeleteSub()
+	err := subService.DeleteSub(id)
 
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.SERVER_ERROR, nil)
@@ -121,6 +129,7 @@ func DeleteSub(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Produce json
 // @Router /subscriptions [get]
+// @Param name query string true "Item Name"
 // @Success 200 {object} app.Response
 // @Failure 500 {object} app.Response
 func GetSubs(c *gin.Context) {
@@ -130,7 +139,9 @@ func GetSubs(c *gin.Context) {
 		OwnerId: util.GetUserId(c),
 	}
 
-	subs, err := subService.GetSubs()
+	itemFilters := util.NewItemFilters(c.Request.URL.Query())
+
+	subs, err := subService.GetSubs(itemFilters)
 
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.SERVER_ERROR, nil)
